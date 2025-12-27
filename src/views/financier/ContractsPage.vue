@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header>
       <ion-toolbar color="primary">
-        <ion-title>Utang Contracts</ion-title>
+        <ion-title>Mga Utang</ion-title>
         <ion-buttons slot="end">
           <ion-button @click="logout">
             <ion-icon :icon="logOutOutline"></ion-icon>
@@ -10,7 +10,7 @@
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
-    <ion-content class="ion-padding">
+    <ion-content>
       <!-- Statistics Card -->
       <ion-card class="stats-card">
         <ion-card-content>
@@ -43,7 +43,7 @@
       <div class="header-actions">
         <ion-button expand="block" @click="showAddModal = true">
           <ion-icon :icon="addOutline" slot="start"></ion-icon>
-          Create Contract
+          Bag-ong Utang
         </ion-button>
       </div>
 
@@ -389,11 +389,11 @@ const logout = () => {
 .stats-card {
   background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-secondary));
   color: white;
-  margin-bottom: 24px;
+  margin: 12px 12px 16px 12px;
 }
 
 .stats-card ion-card-content {
-  padding: 20px;
+  padding: 16px;
 }
 
 .stats-grid {
@@ -427,7 +427,7 @@ const logout = () => {
 }
 
 .header-actions {
-  margin-bottom: 24px;
+  margin: 0 12px 16px 12px;
 }
 
 .header-actions ion-button {
@@ -439,7 +439,7 @@ const logout = () => {
 
 ion-list {
   background: transparent;
-  padding: 0;
+  padding: 0 12px;
 }
 
 ion-item {
@@ -482,7 +482,7 @@ ion-badge {
 ion-card {
   border-radius: 16px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  margin: 16px 0;
+  margin: 12px;
 }
 
 ion-card-header {
@@ -513,6 +513,10 @@ ion-modal ion-item {
   border-radius: 0;
   margin-bottom: 0;
   --min-height: 56px;
+}
+
+.modal-content {
+  padding: 12px;
 }
 
 ion-modal ion-button {

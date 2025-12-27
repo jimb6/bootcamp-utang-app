@@ -5,12 +5,12 @@
         <ion-title>UTANG APP</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content class="ion-padding">
+    <ion-content>
       <div class="role-selection-container">
         <div class="header-section">
           <ion-icon :icon="cashOutline" size="large" color="primary"></ion-icon>
-          <h1>Naay Mangutang? or <br>Ikaw napod Mangutang?</h1>
-          <p>Select your role to continue</p>
+          <h1>Welcome to UTANG APP</h1>
+          <p>Utang Lipay-Lipay, Bayad Likay-Likay</p>
         </div>
 
         <div class="role-cards">
@@ -113,7 +113,7 @@ const showBorrowerSelection = ref(false);
 
 const selectRole = (role: 'financier') => {
   store.setCurrentUser(role);
-  router.push('/financier/borrowers');
+  router.push('/financier/contracts');
 };
 
 const selectBorrower = (borrowerId: string) => {
@@ -162,6 +162,17 @@ const selectBorrower = (borrowerId: string) => {
   font-weight: 800;
   margin: 8px 0;
   background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+}
+
+.header-section p {
+  font-size: 10px;
+  font-weight: 800;
+  margin: 8px 0;
+  background: linear-gradient(135deg, var(--ion-color-medium), var(--ion-color-dark));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

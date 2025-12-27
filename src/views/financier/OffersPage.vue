@@ -10,7 +10,7 @@
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
-    <ion-content class="ion-padding">
+    <ion-content>
       <div class="header-actions">
         <ion-button expand="block" @click="showAddModal = true">
           <ion-icon :icon="addOutline" slot="start"></ion-icon>
@@ -357,7 +357,7 @@ resetForm();
 
 <style scoped>
 .header-actions {
-  margin-bottom: 24px;
+  margin: 12px 12px 16px 12px;
 }
 
 .header-actions ion-button {
@@ -369,7 +369,7 @@ resetForm();
 
 ion-list {
   background: transparent;
-  padding: 0;
+  padding: 0 12px;
 }
 
 ion-item {
@@ -412,7 +412,7 @@ ion-badge {
 ion-card {
   border-radius: 16px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  margin: 16px 0;
+  margin: 12px;
 }
 
 ion-card-header {
@@ -431,6 +431,10 @@ ion-modal ion-item {
   border-radius: 0;
   margin-bottom: 0;
   --min-height: 56px;
+}
+
+.modal-content {
+  padding: 12px;
 }
 
 ion-modal ion-button {

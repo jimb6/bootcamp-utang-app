@@ -10,7 +10,7 @@
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
-    <ion-content class="ion-padding">
+    <ion-content>
       <div class="header-actions">
         <ion-button expand="block" @click="showAddModal = true">
           <ion-icon :icon="addOutline" slot="start"></ion-icon>
@@ -263,7 +263,7 @@ const logout = () => {
 
 <style scoped>
 .header-actions {
-  margin-bottom: 24px;
+  margin: 12px 12px 16px 12px;
 }
 
 .header-actions ion-button {
@@ -275,7 +275,7 @@ const logout = () => {
 
 ion-list {
   background: transparent;
-  padding: 0;
+  padding: 0 12px;
 }
 
 ion-item {
@@ -309,7 +309,7 @@ ion-label p {
 ion-card {
   border-radius: 16px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  margin: 16px 0;
+  margin: 12px;
   border-left: 4px solid var(--ion-color-success);
 }
 
@@ -325,6 +325,10 @@ ion-modal ion-item {
   border-radius: 0;
   margin-bottom: 0;
   --min-height: 56px;
+}
+
+.modal-content {
+  padding: 12px;
 }
 
 ion-modal ion-button {
