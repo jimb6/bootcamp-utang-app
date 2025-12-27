@@ -1,0 +1,138 @@
+/* Additional Mobile-Optimized Animations */
+
+/* Fade In Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Slide Up Animation */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scale In Animation */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Apply animations to cards */
+ion-card {
+  animation: slideUp 0.3s ease-out;
+}
+
+/* Stagger animation for list items */
+ion-list ion-item {
+  animation: slideUp 0.3s ease-out;
+  animation-fill-mode: both;
+}
+
+ion-list ion-item:nth-child(1) { animation-delay: 0.05s; }
+ion-list ion-item:nth-child(2) { animation-delay: 0.1s; }
+ion-list ion-item:nth-child(3) { animation-delay: 0.15s; }
+ion-list ion-item:nth-child(4) { animation-delay: 0.2s; }
+ion-list ion-item:nth-child(5) { animation-delay: 0.25s; }
+
+/* Button Press Effect */
+ion-button:active {
+  transform: scale(0.96);
+}
+
+/* Card Hover/Press Effect */
+ion-card[button]:active,
+ion-item[button]:active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease;
+}
+
+/* Ripple Effect Enhancement */
+ion-button,
+ion-item,
+ion-card[button] {
+  --ripple-color: rgba(var(--ion-color-primary-rgb), 0.2);
+}
+
+/* Modal Slide In */
+ion-modal {
+  --backdrop-opacity: 0.6;
+}
+
+/* Smooth Loading */
+.loading-spinner {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Badge Pulse for Notifications */
+@keyframes badgePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+ion-badge.notification {
+  animation: badgePulse 2s ease-in-out infinite;
+}
+
+/* Better Focus States */
+ion-input:focus-within,
+ion-textarea:focus-within,
+ion-select:focus-within {
+  --highlight-color: var(--ion-color-primary);
+}
+
+/* Smooth Scroll Behavior */
+ion-content {
+  scroll-behavior: smooth;
+}
+
+/* Icon Animations */
+@keyframes iconBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.icon-bounce {
+  animation: iconBounce 0.6s ease-in-out;
+}
+
+/* Success Animation */
+@keyframes successPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(45, 211, 111, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(45, 211, 111, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(45, 211, 111, 0);
+  }
+}
+
+.success-pulse {
+  animation: successPulse 0.6s ease-out;
+}

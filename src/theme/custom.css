@@ -1,0 +1,221 @@
+/* Custom Mobile-First Styles */
+
+:root {
+  --ion-safe-area-top: env(safe-area-inset-top);
+  --ion-safe-area-bottom: env(safe-area-inset-bottom);
+}
+
+/* Enhanced Page Background */
+ion-content {
+  --background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+}
+
+/* Better Toolbar */
+ion-toolbar {
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+  --min-height: 56px;
+}
+
+ion-title {
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: -0.3px;
+}
+
+/* Better Buttons */
+ion-button {
+  --border-radius: 12px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.3px;
+}
+
+ion-button[expand="block"] {
+  height: 48px;
+}
+
+/* Better Cards */
+ion-card {
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  margin: 16px;
+}
+
+ion-card-header {
+  padding: 20px;
+}
+
+ion-card-content {
+  padding: 20px;
+}
+
+/* Better Lists */
+ion-list {
+  background: transparent;
+  padding: 16px;
+}
+
+ion-list-header {
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--ion-color-medium);
+  margin-bottom: 12px;
+}
+
+/* Better Items */
+ion-item {
+  --border-radius: 16px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+ion-item ion-icon[slot="start"] {
+  margin-right: 16px;
+  font-size: 28px;
+}
+
+ion-item ion-icon[slot="end"] {
+  margin-left: 16px;
+}
+
+/* Better Inputs */
+ion-input,
+ion-textarea,
+ion-select {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+}
+
+/* Better Modal */
+ion-modal {
+  --border-radius: 24px 24px 0 0;
+  --box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15);
+}
+
+ion-modal ion-toolbar {
+  --background: linear-gradient(135deg, rgba(var(--ion-color-primary-rgb), 0.05), rgba(var(--ion-color-secondary-rgb), 0.05));
+}
+
+/* Better Badges */
+ion-badge {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+/* Better Tabs */
+ion-tab-bar {
+  --background: white;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+  padding-bottom: var(--ion-safe-area-bottom, 0);
+  height: calc(56px + var(--ion-safe-area-bottom, 0));
+}
+
+ion-tab-button {
+  --color: var(--ion-color-medium);
+  --color-selected: var(--ion-color-primary);
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+ion-tab-button ion-icon {
+  font-size: 26px;
+  margin-bottom: 4px;
+}
+
+ion-tab-button ion-label {
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+/* Better Notes */
+ion-note {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Smooth Transitions */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Empty State Cards */
+ion-card.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, rgba(var(--ion-color-light-rgb), 0.5), white);
+}
+
+ion-card.empty-state ion-icon {
+  font-size: 72px;
+  color: var(--ion-color-medium);
+  opacity: 0.5;
+  margin-bottom: 16px;
+}
+
+ion-card.empty-state p {
+  color: var(--ion-color-medium);
+  font-size: 16px;
+  margin: 0;
+}
+
+/* Loading States */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.loading {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Better Scroll */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(var(--ion-color-medium-rgb), 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--ion-color-medium-rgb), 0.5);
+}
+
+/* Touch Optimizations */
+@media (hover: none) {
+  ion-item[button]:active,
+  ion-card[button]:active {
+    opacity: 0.8;
+  }
+}
+
+/* Better Spacing for Mobile */
+@media (max-width: 576px) {
+  ion-card {
+    margin: 12px;
+  }
+  
+  ion-list {
+    padding: 12px;
+  }
+}

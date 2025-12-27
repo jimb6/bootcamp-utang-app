@@ -1,31 +1,59 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
-import TabsPage from '../views/TabsPage.vue'
+import RoleSelectionPage from '../views/RoleSelectionPage.vue'
+import FinancierTabsPage from '../views/financier/FinancierTabsPage.vue'
+import BorrowerTabsPage from '../views/borrower/BorrowerTabsPage.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/tabs/tab1'
+    component: RoleSelectionPage
   },
   {
-    path: '/tabs/',
-    component: TabsPage,
+    path: '/financier/',
+    component: FinancierTabsPage,
     children: [
       {
         path: '',
-        redirect: '/tabs/tab1'
+        redirect: '/financier/borrowers'
       },
       {
-        path: 'tab1',
-        component: () => import('@/views/Tab1Page.vue')
+        path: 'borrowers',
+        component: () => import('@/views/financier/BorrowersPage.vue')
       },
       {
-        path: 'tab2',
-        component: () => import('@/views/Tab2Page.vue')
+        path: 'contracts',
+        component: () => import('@/views/financier/ContractsPage.vue')
       },
       {
-        path: 'tab3',
-        component: () => import('@/views/Tab3Page.vue')
+        path: 'payments',
+        component: () => import('@/views/financier/PaymentsPage.vue')
+      },
+      {
+        path: 'offers',
+        component: () => import('@/views/financier/OffersPage.vue')
+      }
+    ]
+  },
+  {
+    path: '/borrower/',
+    component: BorrowerTabsPage,
+    children: [
+      {
+        path: '',
+        redirect: '/borrower/contracts'
+      },
+      {
+        path: 'contracts',
+        component: () => import('@/views/borrower/BorrowerContractsPage.vue')
+      },
+      {
+        path: 'payments',
+        component: () => import('@/views/borrower/BorrowerPaymentsPage.vue')
+      },
+      {
+        path: 'offers',
+        component: () => import('@/views/borrower/BorrowerOffersPage.vue')
       }
     ]
   }
