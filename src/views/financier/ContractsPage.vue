@@ -48,7 +48,7 @@
       </div>
 
       <!-- Contracts List -->
-      <ion-list v-if="store.contracts.value.length > 0">
+      <ion-list v-if="store.contracts.value.length > 0" lines="none">
         <ion-item v-for="contract in store.contracts.value" :key="contract.id">
           <ion-label>
             <h2>{{ contract.borrowerName }}</h2>

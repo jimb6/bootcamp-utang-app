@@ -1,9 +1,14 @@
 export interface Borrower {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
+  name: string; // Full name for backward compatibility
+  birthDate: string;
   email: string;
   phone: string;
   address: string;
+  emergencyContactName: string;
+  emergencyContactPhone: string;
   createdAt: Date;
 }
 

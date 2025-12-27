@@ -34,12 +34,12 @@
             </div>
 
             <!-- Borrowers List -->
-            <ion-list v-if="store.borrowers.value.length > 0">
+            <ion-list v-if="store.borrowers.value.length > 0" lines="none">
                 <ion-item v-for="borrower in store.borrowers.value" :key="borrower.id">
                     <ion-icon :icon="personCircleOutline" slot="start" color="primary"></ion-icon>
                     <ion-label>
-                        <h2>{{ borrower.name }}</h2>
-                        <p>{{ borrower.email }} | {{ borrower.phone }}</p>
+                        <h2>{{ borrower.name || `${borrower.firstName} ${borrower.lastName}` }}</h2>
+                        <p>{{ borrower.phone }}</p>
                         <p class="address-text">{{ borrower.address }}</p>
                     </ion-label>
                     <ion-button fill="clear" @click="editBorrower(borrower)">
@@ -59,35 +59,119 @@
             </ion-card>
 
             <!-- Add/Edit Borrower Modal -->
-            <ion-modal :is-open="showAddModal" @did-dismiss="closeModal">
+            <ion-modal :is-open="showAddModal" @did-dismiss="closeModal" class="borrower-modal">
                 <ion-header>
-                    <ion-toolbar>
-                        <ion-title>{{ editingBorrower ? 'Edit' : 'Add' }} Borrower</ion-title>
+                    <ion-toolbar color="primary">
+                        <ion-title>{{ editingBorrower ? 'I-edit' : 'Bag-o' }} Pala-Utang</ion-title>
                         <ion-buttons slot="end">
-                            <ion-button @click="closeModal">Close</ion-button>
+                            <ion-button @click="closeModal">
+                                <ion-icon :icon="closeOutline"></ion-icon>
+                            </ion-button>
                         </ion-buttons>
                     </ion-toolbar>
                 </ion-header>
-                <ion-content class="ion-padding">
-                    <ion-item>
-                        <ion-input v-model="formData.name" label="Name" label-placement="floating"
-                            placeholder="Enter full name"></ion-input>
-                    </ion-item>
-                    <ion-item>
-                        <ion-input v-model="formData.email" label="Email" label-placement="floating" type="email"
-                            placeholder="email@example.com"></ion-input>
-                    </ion-item>
-                    <ion-item>
-                        <ion-input v-model="formData.phone" label="Phone" label-placement="floating" type="tel"
-                            placeholder="09xx-xxx-xxxx"></ion-input>
-                    </ion-item>
-                    <ion-item>
-                        <ion-textarea v-model="formData.address" label="Address" label-placement="floating" :rows="3"
-                            placeholder="Enter complete address"></ion-textarea>
-                    </ion-item>
-                    <ion-button expand="block" @click="saveBorrower" class="ion-margin-top">
-                        {{ editingBorrower ? 'Update' : 'Save' }} Borrower
-                    </ion-button>
+                <ion-content>
+                    <div class="modal-content">
+                        <!-- Personal Information -->
+                        <div class="section-header">
+                            <ion-icon :icon="personOutline"></ion-icon>
+                            <h3>Personal Information</h3>
+                        </div>
+                        
+                        <div class="form-row">
+                            <ion-item class="form-item half">
+                                <ion-input 
+                                    v-model="formData.firstName" 
+                                    label="First Name" 
+                                    label-placement="floating"
+                                    placeholder="Juan"
+                                ></ion-input>
+                            </ion-item>
+                            <ion-item class="form-item half">
+                                <ion-input 
+                                    v-model="formData.lastName" 
+                                    label="Last Name" 
+                                    label-placement="floating"
+                                    placeholder="Dela Cruz"
+                                ></ion-input>
+                            </ion-item>
+                        </div>
+
+                        <ion-item class="form-item">
+                            <ion-input 
+                                v-model="formData.birthDate" 
+                                label="Birth Date" 
+                                label-placement="floating"
+                                type="date"
+                            ></ion-input>
+                        </ion-item>
+
+                        <!-- Contact Information -->
+                        <div class="section-header">
+                            <ion-icon :icon="callOutline"></ion-icon>
+                            <h3>Contact Information</h3>
+                        </div>
+
+                        <ion-item class="form-item">
+                            <ion-input 
+                                v-model="formData.phone" 
+                                label="Contact Number" 
+                                label-placement="floating" 
+                                type="tel"
+                                placeholder="09xx-xxx-xxxx"
+                            ></ion-input>
+                        </ion-item>
+
+                        <ion-item class="form-item">
+                            <ion-input 
+                                v-model="formData.email" 
+                                label="Email (Optional)" 
+                                label-placement="floating" 
+                                type="email"
+                                placeholder="email@example.com"
+                            ></ion-input>
+                        </ion-item>
+
+                        <ion-item class="form-item">
+                            <ion-textarea 
+                                v-model="formData.address" 
+                                label="Address" 
+                                label-placement="floating" 
+                                :rows="2"
+                                placeholder="Complete address"
+                            ></ion-textarea>
+                        </ion-item>
+
+                        <!-- Emergency Contact -->
+                        <div class="section-header">
+                            <ion-icon :icon="alertCircleOutline"></ion-icon>
+                            <h3>Emergency Contact</h3>
+                        </div>
+
+                        <ion-item class="form-item">
+                            <ion-input 
+                                v-model="formData.emergencyContactName" 
+                                label="Full Name" 
+                                label-placement="floating"
+                                placeholder="Emergency contact name"
+                            ></ion-input>
+                        </ion-item>
+
+                        <ion-item class="form-item">
+                            <ion-input 
+                                v-model="formData.emergencyContactPhone" 
+                                label="Contact Number" 
+                                label-placement="floating" 
+                                type="tel"
+                                placeholder="09xx-xxx-xxxx"
+                            ></ion-input>
+                        </ion-item>
+
+                        <ion-button expand="block" color="primary" @click="saveBorrower" class="save-button">
+                            <ion-icon :icon="checkmarkOutline" slot="start"></ion-icon>
+                            {{ editingBorrower ? 'I-update' : 'I-save' }}
+                        </ion-button>
+                    </div>
                 </ion-content>
             </ion-modal>
         </ion-content>
@@ -123,6 +207,11 @@ import {
     trashOutline,
     logOutOutline,
     peopleOutline,
+    closeOutline,
+    checkmarkOutline,
+    callOutline,
+    alertCircleOutline,
+    personOutline,
 } from 'ionicons/icons';
 import { useUtangStore } from '@/composables/useUtangStore';
 import { Borrower } from '@/types';
@@ -133,18 +222,26 @@ const showAddModal = ref(false);
 const editingBorrower = ref<Borrower | null>(null);
 
 const formData = ref({
-    name: '',
+    firstName: '',
+    lastName: '',
+    birthDate: '',
     email: '',
     phone: '',
     address: '',
+    emergencyContactName: '',
+    emergencyContactPhone: '',
 });
 
 const resetForm = () => {
     formData.value = {
-        name: '',
+        firstName: '',
+        lastName: '',
+        birthDate: '',
         email: '',
         phone: '',
         address: '',
+        emergencyContactName: '',
+        emergencyContactPhone: '',
     };
     editingBorrower.value = null;
 };
@@ -157,24 +254,33 @@ const closeModal = () => {
 const editBorrower = (borrower: Borrower) => {
     editingBorrower.value = borrower;
     formData.value = {
-        name: borrower.name,
-        email: borrower.email,
-        phone: borrower.phone,
-        address: borrower.address,
+        firstName: borrower.firstName || '',
+        lastName: borrower.lastName || '',
+        birthDate: borrower.birthDate || '',
+        email: borrower.email || '',
+        phone: borrower.phone || '',
+        address: borrower.address || '',
+        emergencyContactName: borrower.emergencyContactName || '',
+        emergencyContactPhone: borrower.emergencyContactPhone || '',
     };
     showAddModal.value = true;
 };
 
 const saveBorrower = () => {
-    if (!formData.value.name || !formData.value.email) {
-        alert('Please fill in required fields');
+    if (!formData.value.firstName || !formData.value.lastName || !formData.value.phone) {
+        alert('Please fill in required fields (First Name, Last Name, Contact Number)');
         return;
     }
 
+    const borrowerData = {
+        ...formData.value,
+        name: `${formData.value.firstName} ${formData.value.lastName}`.trim(),
+    };
+
     if (editingBorrower.value) {
-        store.updateBorrower(editingBorrower.value.id, formData.value);
+        store.updateBorrower(editingBorrower.value.id, borrowerData);
     } else {
-        store.addBorrower(formData.value);
+        store.addBorrower(borrowerData);
     }
 
     closeModal();
@@ -314,7 +420,7 @@ ion-modal ion-item {
 }
 
 .modal-content {
-    padding: 12px;
+    padding: 8px;
 }
 
 ion-modal ion-button {
@@ -322,4 +428,84 @@ ion-modal ion-button {
     height: 48px;
     font-weight: 600;
 }
-</style>
+.borrower-modal {
+    --border-radius: 8px 8px 0 0;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 16px 0 8px 0;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--ion-color-primary);
+}
+
+.section-header:first-child {
+    margin-top: 0;
+}
+
+.section-header ion-icon {
+    font-size: 18px;
+    color: var(--ion-color-primary);
+}
+
+.section-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ion-color-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.form-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 0;
+}
+
+.form-item {
+    --background: white;
+    --border-radius: 8px;
+    --padding-start: 12px;
+    --padding-end: 12px;
+    --padding-bottom: 8px;
+    --min-height: 44px;
+    --color: var(--ion-color-dark);
+    --placeholder-color: var(--ion-color-medium-shade);
+    --placeholder-opacity: 0.8;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    font-size: 14px;
+}
+
+.form-item.half {
+    flex: 1;
+    margin-bottom: 8px;
+}
+
+.form-item ion-input,
+.form-item ion-textarea {
+    --padding-top: 4px;
+    --padding-bottom: 4px;
+    --color: var(--ion-color-dark);
+    --placeholder-color: var(--ion-color-medium-shade);
+    --placeholder-opacity: 0.8;
+    font-size: 14px;
+}
+
+.form-item ion-label {
+    font-size: 10px;
+    color: var(--ion-color-dark);
+    font-weight: 600;
+}
+
+.save-button {
+    margin-top: 16px;
+    height: 44px;
+    font-weight: 700;
+    font-size: 15px;
+    --border-radius: 12px;
+    --box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.3);
+}</style>
