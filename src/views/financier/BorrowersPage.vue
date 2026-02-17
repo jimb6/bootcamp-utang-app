@@ -16,10 +16,10 @@
                 <ion-card-content>
                     <div class="stats-grid">
                         <div class="stat-item">
-                            <ion-icon :icon="peopleOutline" color="primary"></ion-icon>
+                            <ion-icon :icon="peopleOutline" color="teriary"></ion-icon>
                             <div>
                                 <h3>{{ store.borrowers.value.length }}</h3>
-                                <p>Total Borrowers</p>
+                                <p>Numero sa mga Pala-Utang</p>
                             </div>
                         </div>
                     </div>

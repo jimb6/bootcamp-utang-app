@@ -19,15 +19,15 @@
               <div class="card-icon">
                 <ion-icon :icon="walletOutline" size="large" color="success"></ion-icon>
               </div>
-              <ion-card-title>Tig Pa-Utang</ion-card-title>
-              <ion-card-subtitle>Financier</ion-card-subtitle>
+              <ion-card-title>Listahan sa mga Utang</ion-card-title>
+              <ion-card-subtitle>List of Debts</ion-card-subtitle>
               <p class="role-description">
                 Manage borrowers, create contracts, track payments and create loan offers
               </p>
             </ion-card-content>
           </ion-card>
 
-          <ion-card button @click="showBorrowerSelection = true" class="role-card">
+          <!-- <ion-card button @click="showBorrowerSelection = true" class="role-card">
             <ion-card-content>
               <div class="card-icon">
                 <ion-icon :icon="personOutline" size="large" color="warning"></ion-icon>
@@ -38,7 +38,7 @@
                 View contracts, track payments, see offers and monitor balance
               </p>
             </ion-card-content>
-          </ion-card>
+          </ion-card> -->
         </div>
       </div>
 
