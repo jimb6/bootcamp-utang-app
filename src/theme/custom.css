@@ -99,6 +99,19 @@ ion-modal {
   --box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15);
 }
 
+ion-modal ion-content {
+  --background: #f5f7fa;
+}
+
+ion-modal ion-input,
+ion-modal ion-textarea,
+ion-modal ion-select {
+  --color: #222;
+  --placeholder-color: #999;
+  --background: #fff;
+  color: #222;
+}
+
 ion-modal ion-toolbar {
   --background: linear-gradient(135deg, rgba(var(--ion-color-primary-rgb), 0.05), rgba(var(--ion-color-secondary-rgb), 0.05));
 }

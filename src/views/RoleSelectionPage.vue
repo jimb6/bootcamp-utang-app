@@ -1,23 +1,19 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar color="primary">
-        <ion-title>UTANG APP</ion-title>
-      </ion-toolbar>
-    </ion-header>
+    <AppPageHeader title="UTANG APP" />
     <ion-content>
       <div class="role-selection-container">
         <div class="header-section">
-          <ion-icon :icon="cashOutline" size="large" color="primary"></ion-icon>
+          <ion-icon :icon="cashOutline" size="large" color="primary" />
           <h1>Welcome to UTANG APP</h1>
           <p>Utang Lipay-Lipay, Bayad Likay-Likay</p>
         </div>
 
         <div class="role-cards">
-          <ion-card button @click="selectRole('financier')" class="role-card">
+          <ion-card button @click="enterFinancier" class="role-card">
             <ion-card-content>
               <div class="card-icon">
-                <ion-icon :icon="walletOutline" size="large" color="success"></ion-icon>
+                <ion-icon :icon="walletOutline" size="large" color="success" />
               </div>
               <ion-card-title>Listahan sa mga Utang</ion-card-title>
               <ion-card-subtitle>List of Debts</ion-card-subtitle>
@@ -26,100 +22,28 @@
               </p>
             </ion-card-content>
           </ion-card>
-
-          <!-- <ion-card button @click="showBorrowerSelection = true" class="role-card">
-            <ion-card-content>
-              <div class="card-icon">
-                <ion-icon :icon="personOutline" size="large" color="warning"></ion-icon>
-              </div>
-              <ion-card-title>Pala-Utang</ion-card-title>
-              <ion-card-subtitle>Borrower</ion-card-subtitle>
-              <p class="role-description">
-                View contracts, track payments, see offers and monitor balance
-              </p>
-            </ion-card-content>
-          </ion-card> -->
         </div>
       </div>
-
-      <!-- Borrower Selection Modal -->
-      <ion-modal :is-open="showBorrowerSelection" @did-dismiss="showBorrowerSelection = false">
-        <ion-header>
-          <ion-toolbar>
-            <ion-title>Select Borrower</ion-title>
-            <ion-buttons slot="end">
-              <ion-button @click="showBorrowerSelection = false">Close</ion-button>
-            </ion-buttons>
-          </ion-toolbar>
-        </ion-header>
-        <ion-content class="ion-padding">
-          <ion-list v-if="store.borrowers.value.length > 0">
-            <ion-item 
-              button 
-              v-for="borrower in store.borrowers.value" 
-              :key="borrower.id"
-              @click="selectBorrower(borrower.id)"
-            >
-              <ion-icon :icon="personCircleOutline" slot="start"></ion-icon>
-              <ion-label>
-                <h2>{{ borrower.name }}</h2>
-                <p>{{ borrower.email }}</p>
-              </ion-label>
-            </ion-item>
-          </ion-list>
-          <ion-card v-else>
-            <ion-card-content>
-              <p class="ion-text-center">No borrowers found. Contact your financier to create an account.</p>
-            </ion-card-content>
-          </ion-card>
-        </ion-content>
-      </ion-modal>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonCard,
-  IonCardContent,
-  IonCardTitle,
-  IonCardSubtitle,
-  IonIcon,
-  IonModal,
-  IonButtons,
-  IonButton,
-  IonList,
-  IonItem,
-  IonLabel,
-} from '@ionic/vue';
-import { 
-  cashOutline, 
-  walletOutline, 
-  personOutline, 
-  personCircleOutline 
-} from 'ionicons/icons';
+import { IonPage, IonContent, IonCard, IonCardContent, IonCardTitle, IonCardSubtitle, IonIcon } from '@ionic/vue';
+import { cashOutline, walletOutline } from 'ionicons/icons';
+import AppPageHeader from '@/components/AppPageHeader.vue';
 import { useUtangStore } from '@/composables/useUtangStore';
 
 const router = useRouter();
 const store = useUtangStore();
-const showBorrowerSelection = ref(false);
 
-const selectRole = (role: 'financier') => {
-  store.setCurrentUser(role);
+onMounted(() => store.initialize());
+
+const enterFinancier = () => {
+  store.setCurrentUser('financier');
   router.push('/financier/contracts');
-};
-
-const selectBorrower = (borrowerId: string) => {
-  store.setCurrentUser('borrower', borrowerId);
-  showBorrowerSelection.value = false;
-  router.push('/borrower/contracts');
 };
 </script>
 

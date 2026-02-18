@@ -1,77 +1,82 @@
 import { ref, computed } from 'vue';
-import { Borrower, UtangContract, Payment, UtangOffer, UserRole } from '@/types';
+import type {
+  Borrower,
+  Contract,
+  Payment,
+  Offer,
+  CurrentUser,
+  UserRole,
+  CreateBorrowerRequest,
+  UpdateBorrowerRequest,
+  CreateContractRequest,
+  UpdateContractRequest,
+  CreatePaymentRequest,
+  CreateOfferRequest,
+  UpdateOfferRequest,
+  ApiError,
+} from '@/types';
+import { borrowerService, contractService, paymentService, offerService } from '@/services';
 
-// Storage keys
-const BORROWERS_KEY = 'utang_borrowers';
-const CONTRACTS_KEY = 'utang_contracts';
-const PAYMENTS_KEY = 'utang_payments';
-const OFFERS_KEY = 'utang_offers';
+// ── Reactive State (singleton across the app) ─────────────────
+const currentUser = ref<CurrentUser | null>(null);
+const borrowers = ref<Borrower[]>([]);
+const contracts = ref<Contract[]>([]);
+const payments = ref<Payment[]>([]);
+const offers = ref<Offer[]>([]);
+const loading = ref(false);
+const error = ref<string | null>(null);
+const initialized = ref(false);
+
 const CURRENT_USER_KEY = 'utang_current_user';
 
-// Current user state
-const currentUser = ref<{ role: UserRole; borrowerId?: string } | null>(null);
+// ── Helpers ───────────────────────────────────────────────────
+function handleError(err: unknown): string {
+  const apiErr = err as ApiError;
+  const msg = apiErr?.message || 'An unexpected error occurred';
+  error.value = msg;
+  console.error('[UtangStore]', msg, err);
+  return msg;
+}
 
-// Data stores
-const borrowers = ref<Borrower[]>([]);
-const contracts = ref<UtangContract[]>([]);
-const payments = ref<Payment[]>([]);
-const offers = ref<UtangOffer[]>([]);
+// ── Composable ────────────────────────────────────────────────
+export function useUtangStore() {
+  // ── Init ──────────────────────────────────────────────────
+  const initialize = async () => {
+    if (initialized.value) return;
 
-// Load data from localStorage
-const loadData = () => {
-  try {
-    const storedBorrowers = localStorage.getItem(BORROWERS_KEY);
-    if (storedBorrowers) borrowers.value = JSON.parse(storedBorrowers);
+    // Restore persisted user
+    try {
+      const stored = localStorage.getItem(CURRENT_USER_KEY);
+      if (stored) currentUser.value = JSON.parse(stored);
+    } catch { /* ignore corrupt storage */ }
 
-    const storedContracts = localStorage.getItem(CONTRACTS_KEY);
-    if (storedContracts) {
-      contracts.value = JSON.parse(storedContracts).map((c: any) => ({
-        ...c,
-        startDate: new Date(c.startDate),
-        dueDate: new Date(c.dueDate),
-      }));
+    await fetchAll();
+    initialized.value = true;
+  };
+
+  const fetchAll = async () => {
+    loading.value = true;
+    error.value = null;
+    try {
+      const [b, c, p, o] = await Promise.all([
+        borrowerService.getAll(),
+        contractService.getAll(),
+        paymentService.getAll(),
+        offerService.getAll(),
+      ]);
+      borrowers.value = b;
+      contracts.value = c;
+      payments.value = p;
+      offers.value = o;
+    } catch (err) {
+      handleError(err);
+    } finally {
+      loading.value = false;
     }
+  };
 
-    const storedPayments = localStorage.getItem(PAYMENTS_KEY);
-    if (storedPayments) {
-      payments.value = JSON.parse(storedPayments).map((p: any) => ({
-        ...p,
-        paymentDate: new Date(p.paymentDate),
-      }));
-    }
-
-    const storedOffers = localStorage.getItem(OFFERS_KEY);
-    if (storedOffers) {
-      offers.value = JSON.parse(storedOffers).map((o: any) => ({
-        ...o,
-        offerDate: new Date(o.offerDate),
-        expiryDate: new Date(o.expiryDate),
-      }));
-    }
-
-    const storedUser = localStorage.getItem(CURRENT_USER_KEY);
-    if (storedUser) currentUser.value = JSON.parse(storedUser);
-  } catch (error) {
-    console.error('Error loading data:', error);
-  }
-};
-
-// Save data to localStorage
-const saveData = () => {
-  localStorage.setItem(BORROWERS_KEY, JSON.stringify(borrowers.value));
-  localStorage.setItem(CONTRACTS_KEY, JSON.stringify(contracts.value));
-  localStorage.setItem(PAYMENTS_KEY, JSON.stringify(payments.value));
-  localStorage.setItem(OFFERS_KEY, JSON.stringify(offers.value));
-};
-
-export const useUtangStore = () => {
-  // Initialize data
-  if (borrowers.value.length === 0) {
-    loadData();
-  }
-
-  // User management
-  const setCurrentUser = (role: UserRole, borrowerId?: string) => {
+  // ── User Management ───────────────────────────────────────
+  const setCurrentUser = (role: UserRole, borrowerId?: number) => {
     currentUser.value = { role, borrowerId };
     localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser.value));
   };
@@ -81,160 +86,225 @@ export const useUtangStore = () => {
     localStorage.removeItem(CURRENT_USER_KEY);
   };
 
-  // Borrower operations
-  const addBorrower = (borrower: Omit<Borrower, 'id' | 'createdAt'>) => {
-    const newBorrower: Borrower = {
-      ...borrower,
-      id: Date.now().toString(),
-      createdAt: new Date(),
-    };
-    borrowers.value.push(newBorrower);
-    saveData();
-    return newBorrower;
-  };
-
-  const updateBorrower = (id: string, updates: Partial<Borrower>) => {
-    const index = borrowers.value.findIndex(b => b.id === id);
-    if (index !== -1) {
-      borrowers.value[index] = { ...borrowers.value[index], ...updates };
-      saveData();
+  // ── Borrower Fetch ────────────────────────────────────────
+  const fetchBorrowers = async () => {
+    loading.value = true;
+    error.value = null;
+    try {
+      borrowers.value = await borrowerService.getAll();
+    } catch (err) {
+      handleError(err);
+    } finally {
+      loading.value = false;
     }
   };
 
-  const deleteBorrower = (id: string) => {
-    borrowers.value = borrowers.value.filter(b => b.id !== id);
-    saveData();
-  };
-
-  // Contract operations
-  const addContract = (contract: Omit<UtangContract, 'id' | 'remainingBalance'>) => {
-    const newContract: UtangContract = {
-      ...contract,
-      id: Date.now().toString(),
-      remainingBalance: contract.totalAmount,
-    };
-    contracts.value.push(newContract);
-    saveData();
-    return newContract;
-  };
-
-  const updateContract = (id: string, updates: Partial<UtangContract>) => {
-    const index = contracts.value.findIndex(c => c.id === id);
-    if (index !== -1) {
-      contracts.value[index] = { ...contracts.value[index], ...updates };
-      saveData();
+  // ── Borrower CRUD ─────────────────────────────────────────
+  const addBorrower = async (data: CreateBorrowerRequest): Promise<Borrower> => {
+    loading.value = true;
+    try {
+      const created = await borrowerService.create(data);
+      borrowers.value.push(created);
+      return created;
+    } catch (err) {
+      throw new Error(handleError(err));
+    } finally {
+      loading.value = false;
     }
   };
 
-  const deleteContract = (id: string) => {
-    contracts.value = contracts.value.filter(c => c.id !== id);
-    payments.value = payments.value.filter(p => p.contractId !== id);
-    saveData();
-  };
-
-  // Payment operations
-  const addPayment = (payment: Omit<Payment, 'id'>) => {
-    const newPayment: Payment = {
-      ...payment,
-      id: Date.now().toString(),
-    };
-    payments.value.push(newPayment);
-
-    // Update contract balance
-    const contract = contracts.value.find(c => c.id === payment.contractId);
-    if (contract) {
-      contract.remainingBalance -= payment.amount;
-      if (contract.remainingBalance <= 0) {
-        contract.status = 'completed';
-        contract.remainingBalance = 0;
-      }
-    }
-
-    saveData();
-    return newPayment;
-  };
-
-  const deletePayment = (id: string) => {
-    const payment = payments.value.find(p => p.id === id);
-    if (payment) {
-      const contract = contracts.value.find(c => c.id === payment.contractId);
-      if (contract) {
-        contract.remainingBalance += payment.amount;
-        if (contract.remainingBalance > 0 && contract.status === 'completed') {
-          contract.status = 'active';
-        }
-      }
-      payments.value = payments.value.filter(p => p.id !== id);
-      saveData();
+  const updateBorrower = async (id: number, data: UpdateBorrowerRequest): Promise<void> => {
+    loading.value = true;
+    try {
+      const updated = await borrowerService.update(id, data);
+      const idx = borrowers.value.findIndex((b) => b.id === id);
+      if (idx !== -1) borrowers.value[idx] = updated;
+    } catch (err) {
+      throw new Error(handleError(err));
+    } finally {
+      loading.value = false;
     }
   };
 
-  // Offer operations
-  const addOffer = (offer: Omit<UtangOffer, 'id'>) => {
-    const newOffer: UtangOffer = {
-      ...offer,
-      id: Date.now().toString(),
-    };
-    offers.value.push(newOffer);
-    saveData();
-    return newOffer;
-  };
-
-  const updateOffer = (id: string, updates: Partial<UtangOffer>) => {
-    const index = offers.value.findIndex(o => o.id === id);
-    if (index !== -1) {
-      offers.value[index] = { ...offers.value[index], ...updates };
-      saveData();
+  const deleteBorrower = async (id: number): Promise<void> => {
+    loading.value = true;
+    try {
+      await borrowerService.delete(id);
+      borrowers.value = borrowers.value.filter((b) => b.id !== id);
+    } catch (err) {
+      throw new Error(handleError(err));
+    } finally {
+      loading.value = false;
     }
   };
 
-  const deleteOffer = (id: string) => {
-    offers.value = offers.value.filter(o => o.id !== id);
-    saveData();
+  // ── Contract CRUD ─────────────────────────────────────────
+  const addContract = async (data: CreateContractRequest): Promise<Contract> => {
+    loading.value = true;
+    try {
+      const created = await contractService.create(data);
+      contracts.value.push(created);
+      return created;
+    } catch (err) {
+      throw new Error(handleError(err));
+    } finally {
+      loading.value = false;
+    }
   };
 
-  // Computed values
-  const getContractsByBorrower = (borrowerId: string) => {
-    return computed(() => contracts.value.filter(c => c.borrowerId === borrowerId));
+  const updateContract = async (id: number, data: UpdateContractRequest): Promise<void> => {
+    loading.value = true;
+    try {
+      const updated = await contractService.update(id, data);
+      const idx = contracts.value.findIndex((c) => c.id === id);
+      if (idx !== -1) contracts.value[idx] = updated;
+    } catch (err) {
+      throw new Error(handleError(err));
+    } finally {
+      loading.value = false;
+    }
   };
 
-  const getPaymentsByContract = (contractId: string) => {
-    return computed(() => payments.value.filter(p => p.contractId === contractId));
+  const deleteContract = async (id: number): Promise<void> => {
+    loading.value = true;
+    try {
+      await contractService.delete(id);
+      contracts.value = contracts.value.filter((c) => c.id !== id);
+      payments.value = payments.value.filter((p) => p.contractId !== id);
+    } catch (err) {
+      throw new Error(handleError(err));
+    } finally {
+      loading.value = false;
+    }
   };
 
-  const getOffersByBorrower = (borrowerId: string) => {
-    return computed(() => offers.value.filter(o => o.borrowerId === borrowerId));
+  // ── Payment CRUD ──────────────────────────────────────────
+  const addPayment = async (data: CreatePaymentRequest): Promise<Payment> => {
+    loading.value = true;
+    try {
+      const created = await paymentService.create(data);
+      payments.value.push(created);
+      // Refresh contracts to get updated balance from the API
+      const updatedContracts = await contractService.getAll();
+      contracts.value = updatedContracts;
+      return created;
+    } catch (err) {
+      throw new Error(handleError(err));
+    } finally {
+      loading.value = false;
+    }
   };
 
-  const totalLentAmount = computed(() => {
-    return contracts.value.reduce((sum, c) => sum + c.principalAmount, 0);
-  });
+  const deletePayment = async (id: number): Promise<void> => {
+    loading.value = true;
+    try {
+      await paymentService.delete(id);
+      payments.value = payments.value.filter((p) => p.id !== id);
+      // Refresh contracts to get updated balance from the API
+      const updatedContracts = await contractService.getAll();
+      contracts.value = updatedContracts;
+    } catch (err) {
+      throw new Error(handleError(err));
+    } finally {
+      loading.value = false;
+    }
+  };
 
-  const totalOutstanding = computed(() => {
-    return contracts.value.reduce((sum, c) => sum + c.remainingBalance, 0);
-  });
+  // ── Offer CRUD ────────────────────────────────────────────
+  const addOffer = async (data: CreateOfferRequest): Promise<Offer> => {
+    loading.value = true;
+    try {
+      const created = await offerService.create(data);
+      offers.value.push(created);
+      return created;
+    } catch (err) {
+      throw new Error(handleError(err));
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const updateOffer = async (id: number, data: UpdateOfferRequest): Promise<void> => {
+    loading.value = true;
+    try {
+      const updated = await offerService.update(id, data);
+      const idx = offers.value.findIndex((o) => o.id === id);
+      if (idx !== -1) offers.value[idx] = updated;
+    } catch (err) {
+      throw new Error(handleError(err));
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const deleteOffer = async (id: number): Promise<void> => {
+    loading.value = true;
+    try {
+      await offerService.delete(id);
+      offers.value = offers.value.filter((o) => o.id !== id);
+    } catch (err) {
+      throw new Error(handleError(err));
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  // ── Computed Getters ──────────────────────────────────────
+  const getContractsByBorrower = (borrowerId: number) =>
+    computed(() => contracts.value.filter((c) => c.borrowerId === borrowerId));
+
+  const getPaymentsByContract = (contractId: number) =>
+    computed(() => payments.value.filter((p) => p.contractId === contractId));
+
+  const getOffersByBorrower = (borrowerId: number) =>
+    computed(() => offers.value.filter((o) => o.borrowerId === borrowerId));
+
+  const totalLentAmount = computed(() =>
+    contracts.value.reduce((sum, c) => sum + c.principalAmount, 0),
+  );
+
+  const totalOutstanding = computed(() =>
+    contracts.value.reduce((sum, c) => sum + c.remainingBalance, 0),
+  );
+
+  const activeContracts = computed(() =>
+    contracts.value.filter((c) => c.status === 'active'),
+  );
 
   return {
-    // State
+    // State (readonly computed refs)
     currentUser: computed(() => currentUser.value),
     borrowers: computed(() => borrowers.value),
     contracts: computed(() => contracts.value),
     payments: computed(() => payments.value),
     offers: computed(() => offers.value),
+    loading: computed(() => loading.value),
+    error: computed(() => error.value),
 
-    // User management
+    // Lifecycle
+    initialize,
+    fetchAll,
+
+    // User
     setCurrentUser,
     clearCurrentUser,
 
-    // Operations
+    // Borrower
+    fetchBorrowers,
     addBorrower,
     updateBorrower,
     deleteBorrower,
+
+    // Contract
     addContract,
     updateContract,
     deleteContract,
+
+    // Payment
     addPayment,
     deletePayment,
+
+    // Offer
     addOffer,
     updateOffer,
     deleteOffer,
@@ -245,5 +315,6 @@ export const useUtangStore = () => {
     getOffersByBorrower,
     totalLentAmount,
     totalOutstanding,
+    activeContracts,
   };
-};
+}

@@ -16,6 +16,15 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://api.jimpustabuot.dev',
+        changeOrigin: true,
+        secure: true,
+      },
+    },
+  },
   test: {
     globals: true,
     environment: 'jsdom'
