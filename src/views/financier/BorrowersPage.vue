@@ -97,7 +97,7 @@ const emptyForm = (): CreateBorrowerRequest => ({
 const form = ref<CreateBorrowerRequest>(emptyForm());
 
 const statsItems = computed<StatItem[]>(() => [
-  { icon: peopleOutline, iconColor: 'tertiary', value: store.borrowers.value.length, label: 'Numero sa mga Pala-Utang' },
+  { icon: peopleOutline, iconColor: 'light', value: store.borrowers.value.length, label: 'Numero sa mga Pala-Utang' },
 ]);
 
 const openEdit = (borrower: Borrower) => {

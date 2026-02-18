@@ -185,7 +185,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { IonPage, IonContent, IonList, IonItem, IonButton, IonIcon, IonInput, IonTextarea, IonSelect, IonSelectOption, IonSearchbar } from '@ionic/vue';
+import { IonPage, IonContent, IonList, IonItem, IonButton, IonIcon, IonInput, IonTextarea, IonSelect, IonSelectOption, IonSearchbar, onIonViewWillEnter } from '@ionic/vue';
 import { addOutline, documentTextOutline, trendingUpOutline, walletOutline, checkmarkOutline, personOutline, calendarOutline, cashOutline, calculatorOutline, personCircleOutline, trashOutline } from 'ionicons/icons';
 import AppPageHeader from '@/components/AppPageHeader.vue';
 import AppStatsCard from '@/components/AppStatsCard.vue';
@@ -210,6 +210,10 @@ const showAddModal = ref(false);
 const showDetailsModal = ref(false);
 const selectedContract = ref<Contract | null>(null);
 const searchQuery = ref('');
+
+onIonViewWillEnter(() => {
+  store.fetchContracts();
+});
 
 // Stats
 const statsItems = computed<StatItem[]>(() => [

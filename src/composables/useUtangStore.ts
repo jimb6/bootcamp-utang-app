@@ -138,6 +138,19 @@ export function useUtangStore() {
     }
   };
 
+  // ── Contract Fetch ────────────────────────────────────────
+  const fetchContracts = async () => {
+    loading.value = true;
+    error.value = null;
+    try {
+      contracts.value = await contractService.getAll();
+    } catch (err) {
+      handleError(err);
+    } finally {
+      loading.value = false;
+    }
+  };
+
   // ── Contract CRUD ─────────────────────────────────────────
   const addContract = async (data: CreateContractRequest): Promise<Contract> => {
     loading.value = true;
@@ -296,6 +309,7 @@ export function useUtangStore() {
     deleteBorrower,
 
     // Contract
+    fetchContracts,
     addContract,
     updateContract,
     deleteContract,
